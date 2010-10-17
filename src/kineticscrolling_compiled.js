@@ -1,3 +1,7 @@
+// KineticScrolling
+// https://code.google.com/p/kineticscrolling/
+// Copyright (c) 2010 Tatsuhiro Tsujikawa
+// Released under the MIT License
 var g=null;function i(){this.a=g;this.b=[];this.c=this.i=this.j=this.m=this.g=this.d=g;this.e=new KineticScrollingOverlay_;this.h=5.0E-5;this.k=50}function k(a,b){return Math.sqrt(b[0]*b[0]+b[1]*b[1])}function n(a,b,e,c,f,d,o,p){function m(h){var l=(new Date).getTime();if(!(l-h>a.k*3)){h=l-p;var j=h*h;h=b-c*j;j=f-o*j;if(h>1||j>1){a.a.panBy(h*e,j*d);a.d=window.setTimeout(function(){m(l)},a.k)}}}return m}
 function q(a){return function(){a.d&&window.clearTimeout(a.d);a.c=google.maps.event.addListener(a.a,"mousemove",r(a));a.b=[]}}
 function s(a){return function(){google.maps.event.removeListener(a.c);a.c=g;if(!(a.b.length<2)){for(var b=a.b[0].l,e=a.b[0].f,c=g,f=g,d=1;d<a.b.length;++d){if(e-a.b[d].f>200)break;c=a.b[d].l;f=a.b[d].f}if(c)if(e!=f){b=[b.x-c.x,b.y-c.y];d=k(a,b);if(d!=0){c=[1,0];c=Math.acos((b[0]*c[0]+b[1]*c[1])/(k(a,b)*k(a,c)));e=Math.min(40,d/(e-f)*30);f=Math.cos(c);c=Math.sin(c);d=(new Date).getTime();n(a,Math.abs(f)*e,b[0]<0?1:-1,Math.abs(f*a.h),Math.abs(c)*e,b[1]<0?1:-1,Math.abs(c*a.h),d)(d)}}}}}
