@@ -148,7 +148,7 @@ KineticScrolling.prototype.genPartialScrollFun_ = function(
         var t2 = elapsed*elapsed;
         var dx = xv-xa*t2;
         var dy = yv-ya*t2;
-        if(dx > 0.000001 || dy > 0.000001) {
+        if(dx > 1 || dy > 1) {
             that.map_.panBy(dx*xd, dy*yd);
             that.scrollTimeoutId_ = window.setTimeout(
                 function() {
@@ -204,24 +204,22 @@ KineticScrolling.prototype.genDragendCallback_ = function() {
         }
         var v1 = [endPoint.x-startPoint.x, endPoint.y-startPoint.y];
         var len = that.vecLength_(v1);
-        if(len < 0.000001) {
+        if(len == 0) {
             return;
         }
         var v2 = [1, 0];
         var theta = that.angle_(v1, v2);
-        if(len > 0) {
-            var initial = Math.min(40, len/(endTime-startTime)*30);
-            var cosTheta = Math.cos(theta);
-            var sinTheta = Math.sin(theta);
-            var now = new Date().getTime();
-            that.genPartialScrollFun_(Math.abs(cosTheta)*initial,
-                                      v1[0] < 0?1:-1,
-                                      Math.abs(cosTheta*that.deceleration_),
-                                      Math.abs(sinTheta)*initial,
-                                      v1[1] < 0?1:-1,
-                                      Math.abs(sinTheta*that.deceleration_),
-                                      now)(now);
-        }
+        var initial = Math.min(40, len/(endTime-startTime)*30);
+        var cosTheta = Math.cos(theta);
+        var sinTheta = Math.sin(theta);
+        var now = new Date().getTime();
+        that.genPartialScrollFun_(Math.abs(cosTheta)*initial,
+                                  v1[0] < 0?1:-1,
+                                  Math.abs(cosTheta*that.deceleration_),
+                                  Math.abs(sinTheta)*initial,
+                                  v1[1] < 0?1:-1,
+                                  Math.abs(sinTheta*that.deceleration_),
+                                  now)(now);
     };
 };
 
