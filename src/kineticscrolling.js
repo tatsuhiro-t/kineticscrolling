@@ -73,19 +73,9 @@ function KineticScrolling() {
     this.mouseMoveEventListener_ = null;
 
     /**
-     * @constructor
-     * @base google.maps.OverlayView
-     */
-    function NullOverlayView() {}
-    NullOverlayView.prototype = new google.maps.OverlayView;
-    NullOverlayView.prototype.onAdd = function() {};
-    NullOverlayView.prototype.draw = function() {};
-    NullOverlayView.prototype.onRemove = function() {};
-    
-    /**
      * @private
      */
-    this.overlay_ = new NullOverlayView();
+    this.overlay_ = new KineticScrollingOverlay_();
 
     /**
      * @private
@@ -317,3 +307,29 @@ KineticScrolling.prototype.setMap = function(map) {
 KineticScrolling.prototype.getMap = function() {
     return this.map_;
 }
+
+/**
+ * OverlayView used to convert latLng to pixel.
+ * @constructor
+ * @base google.maps.OverlayView
+ */
+function KineticScrollingOverlay_() {}
+
+KineticScrollingOverlay_.prototype = new google.maps.OverlayView;
+
+KineticScrollingOverlay_.prototype.onAdd = function() {};
+
+KineticScrollingOverlay_.prototype.draw = function() {};
+
+KineticScrollingOverlay_.prototype.onRemove = function() {};
+
+// For closure compiler's ADVANCED OPTIMIZATIONS
+window['KineticScrolling'] = KineticScrolling;
+KineticScrolling.prototype['getMap'] = KineticScrolling.prototype.getMap;
+KineticScrolling.prototype['setMap'] = KineticScrolling.prototype.setMap;
+
+window['KineticScrollingOverlay_'] = KineticScrollingOverlay_;
+KineticScrollingOverlay_['onAdd'] = KineticScrollingOverlay_.prototype.onAdd;
+KineticScrollingOverlay_['draw'] = KineticScrollingOverlay_.prototype.draw;
+KineticScrollingOverlay_['onRemove'] =
+    KineticScrollingOverlay_.prototype.onRemove;
