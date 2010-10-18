@@ -70,7 +70,7 @@ function KineticScrolling() {
     /**
      * @private
      */
-    this.mouseMoveEventListener_ = null;
+    this.dragListener_ = null;
 
     /**
      * @private
@@ -167,9 +167,6 @@ KineticScrolling.prototype.genDragstartCallback_ = function() {
     var that = this;
     return function() {
         that.stopScroll_();
-        that.mouseMoveEventListener_ =
-            google.maps.event.addListener(that.map_, 'mousemove',
-                                          that.genMouseMoveCallback_());
         that.points_ = [];
     };
 };
@@ -180,8 +177,6 @@ KineticScrolling.prototype.genDragstartCallback_ = function() {
 KineticScrolling.prototype.genDragendCallback_ = function() {
     var that = this;
     return function() {
-        google.maps.event.removeListener(that.mouseMoveEventListener_);
-        that.mouseMoveEventListener_ = null;
         if(that.points_.length < 2) {
             return;
         }
@@ -214,10 +209,10 @@ KineticScrolling.prototype.genDragendCallback_ = function() {
         var sinTheta = Math.sin(theta);
         var now = new Date().getTime();
         that.genPartialScrollFun_(Math.abs(cosTheta)*initial,
-                                  v1[0] < 0?1:-1,
+                                  v1[0] >= 0?1:-1,
                                   Math.abs(cosTheta*that.deceleration_),
                                   Math.abs(sinTheta)*initial,
-                                  v1[1] < 0?1:-1,
+                                  v1[1] >= 0?1:-1,
                                   Math.abs(sinTheta*that.deceleration_),
                                   now)(now);
     };
@@ -226,11 +221,12 @@ KineticScrolling.prototype.genDragendCallback_ = function() {
 /**
  * @private
  */
-KineticScrolling.prototype.genMouseMoveCallback_ = function() {
+KineticScrolling.prototype.genDragCallback_ = function() {
     var that = this;
-    return function(event) {
+    return function() {
         var projection = that.overlay_.getProjection();
-        var point = projection.fromLatLngToContainerPixel(event.latLng);
+        var point =
+            projection.fromLatLngToDivPixel(that.map_.getCenter());
         that.points_.unshift({point:point, time:new Date().getTime()});
         if(that.points_.length > 100) {
             that.points_.pop();
@@ -246,9 +242,7 @@ KineticScrolling.prototype.removeMapsEventLister_ = function() {
     google.maps.event.removeListener(this.zoomChangedListener_);
     google.maps.event.removeListener(this.dragStartListener_);
     google.maps.event.removeListener(this.dragEndListener_);
-    if(this.mouseMoveEventListener_) {
-        google.maps.event.removeListener(this.mouseMoveEventListener_);
-    }
+    google.maps.event.removeListener(this.dragtListener_);
 };
 
 /**
@@ -299,6 +293,10 @@ KineticScrolling.prototype.setMap = function(map) {
         this.dragEndListener_ =
             google.maps.event.addListener(this.map_, 'dragend',
                                           this.genDragendCallback_());  
+
+        this.dragListener_ =
+            google.maps.event.addListener(this.map_, 'drag',
+                                          this.genDragCallback_());  
     }
 };
 
