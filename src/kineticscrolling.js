@@ -242,7 +242,7 @@ KineticScrolling.prototype.removeMapsEventLister_ = function() {
     google.maps.event.removeListener(this.zoomChangedListener_);
     google.maps.event.removeListener(this.dragStartListener_);
     google.maps.event.removeListener(this.dragEndListener_);
-    google.maps.event.removeListener(this.dragtListener_);
+    google.maps.event.removeListener(this.dragListener_);
 };
 
 /**
