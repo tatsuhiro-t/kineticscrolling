@@ -85,7 +85,7 @@ function KineticScrolling() {
     /**
      * @private
      */
-    this.panInterval_ = 50;
+    this.panInterval_ = 25;
 }
 
 /**
@@ -141,15 +141,23 @@ KineticScrolling.prototype.genPartialScrollFun_ = function(
         var now = new Date().getTime();
         // If scroll is not called in certain time interval, we stop
         // scroll. That is too slow to show smooth animation.
-        if(now-prevTime > that.panInterval_*3) {
+        if(now-prevTime > 150) {
             return;
         }
         var elapsed = now-baseTime;
         var t2 = elapsed*elapsed;
         var dx = xv-xa*t2;
         var dy = yv-ya*t2;
+
+        var projection = that.overlay_.getProjection();
+        var point = projection.fromLatLngToDivPixel(that.map_.getCenter());
+        point.x += dx*xd;
+        point.y += dy*yd;
+        var latlng = projection.fromDivPixelToLatLng(point);
+        
         if(dx > 1 || dy > 1) {
-            that.map_.panBy(dx*xd, dy*yd);
+            // panBy() does not work in the Maps API 3.8
+            that.map_.setCenter(latlng);
             that.scrollTimeoutId_ = window.setTimeout(
                 function() {
                     scroll(now);
